@@ -1,3 +1,36 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+textarea {
+  resize: none;
+}
+
+.pagination {
+    list-style: none;
+    height: 31.5px;   
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+    cursor: pointer;
+  }
+  
+  .active-page {
+    background-color: #247b7b;
+    border-radius: 50%;
+  }
+  
+  .pagination-item {
+    list-style: none;
+    padding: 2px 12px;
+    height: 31.5px;
+    width: 31.5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2px;
+  }
+
+  .custom-classname {
+    color: #ab199f;
+  }

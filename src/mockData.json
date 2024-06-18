@@ -2,183 +2,243 @@
 [
     {
       "id": 1,
-      "firstName": "John",
-      "lastName": "Doe",
-      "phoneNumber": "123-456-7890",
-      "partner": "Company A",
-      "location": "City A",
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
       "status": "Active"
     },
     {
       "id": 2,
-      "firstName": "Jane",
-      "lastName": "Smith",
-      "phoneNumber": "987-654-3210",
-      "partner": "Company B",
-      "location": "City B",
-      "status": "Awaiting Approval"
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Inactive"
     },
     {
       "id": 3,
-      "firstName": "Michael",
-      "lastName": "Johnson",
-      "phoneNumber": "555-123-4567",
-      "partner": "Company C",
-      "location": "City C",
-      "status": "Deactivated"
+      "companyName": "Infinion Tech.",      
+      "startDate": "27/10/2022",
+      "status": "Active"
     },
     {
       "id": 4,
-      "firstName": "Emily",
-      "lastName": "Williams",
-      "phoneNumber": "222-333-4444",
-      "partner": "Company A",
-      "location": "City A",
+      "companyName": "Infinion Tech.",
+      "startDate": "27/10/2022",
       "status": "Active"
     },
     {
       "id": 5,
-      "firstName": "Daniel",
-      "lastName": "Brown",
-      "phoneNumber": "777-888-9999",
-      "partner": "Company B",
-      "location": "City B",
-      "status": "Awaiting Approval"
+      "companyName": "Infinion Tech.",
+      "startDate": "27/10/2022",
+      "status": "Inactive"
     },
     {
       "id": 6,
-      "firstName": "Olivia",
-      "lastName": "Taylor",
-      "phoneNumber": "111-222-3333",
-      "partner": "Company C",
-      "location": "City C",
-      "status": "Deactivated"
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Active"
     },
     {
       "id": 7,
-      "firstName": "James",
-      "lastName": "Anderson",
-      "phoneNumber": "444-555-6666",
-      "partner": "Company A",
-      "location": "City A",
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
       "status": "Active"
     },
     {
       "id": 8,
-      "firstName": "Sophia",
-      "lastName": "Martinez",
-      "phoneNumber": "999-888-7777",
-      "partner": "Company B",
-      "location": "City B",
-      "status": "Awaiting Approval"
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Inactive"
     },
     {
       "id": 9,
-      "firstName": "William",
-      "lastName": "Garcia",
-      "phoneNumber": "555-666-7777",
-      "partner": "Company C",
-      "location": "City C",
-      "status": "Deactivated"
+      "companyName": "Infinion Tech.",  
+      "startDate": "27/10/2022",
+      "status": "Active"
     },
     {
       "id": 10,
-      "firstName": "Ava",
-      "lastName": "Robinson",
-      "phoneNumber": "111-222-3333",
-      "partner": "Company A",
-      "location": "City A",
+      "companyName": "Infinion Tech.",      
+      "startDate": "27/10/2022",
       "status": "Active"
     },
     {
       "id": 11,
-      "firstName": "Liam",
-      "lastName": "Clark",
-      "phoneNumber": "777-888-9999",
-      "partner": "Company B",
-      "location": "City B",
-      "status": "Awaiting Approval"
+      "companyName": "Infinion Tech.",
+      "startDate": "27/10/2022",
+      "status": "Inactive"
     },
     {
       "id": 12,
-      "firstName": "Isabella",
-      "lastName": "Hall",
-      "phoneNumber": "222-333-4444",
-      "partner": "Company C",
-      "location": "City C",
-      "status": "Deactivated"
+      "companyName": "Infinion Tech.",
+      "startDate": "27/10/2022",
+      "status": "Inctive"
     },
     {
       "id": 13,
-      "firstName": "Benjamin",
-      "lastName": "Young",
-      "phoneNumber": "444-555-6666",
-      "partner": "Company A",
-      "location": "City A",
+      "companyName": "Infinion Tech.",   
+      "startDate": "27/10/2022",
       "status": "Active"
     },
     {
       "id": 14,
-      "firstName": "Mia",
-      "lastName": "Scott",
-      "phoneNumber": "999-888-7777",
-      "partner": "Company B",
-      "location": "City B",
-      "status": "Awaiting Approval"
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Inactive"
     },
     {
       "id": 15,
-      "firstName": "Ethan",
-      "lastName": "Adams",
-      "phoneNumber": "555-666-7777",
-      "partner": "Company C",
-      "location": "City C",
-      "status": "Deactivated"
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Inctive"
     },
     {
       "id": 16,
-      "firstName": "Amelia",
-      "lastName": "Cook",
-      "phoneNumber": "123-456-7890",
-      "partner": "Company A",
-      "location": "City A",
+      "companyName": "Infinion Tech.",     
+      "startDate": "27/10/2022",
       "status": "Active"
     },
     {
       "id": 17,
-      "firstName": "Oliver",
-      "lastName": "Parker",
-      "phoneNumber": "987-654-3210",
-      "partner": "Company B",
-      "location": "City B",
-      "status": "Awaiting Approval"
+      "companyName": "Infinion Tech.",  
+      "startDate": "27/10/2022",
+      "status": "Inactive"
     },
     {
       "id": 18,
-      "firstName": "Emma",
-      "lastName": "Miller",
-      "phoneNumber": "555-123-4567",
-      "partner": "Company C",
-      "location": "City C",
-      "status": "Deactivated"
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Inctive"
     },
     {
       "id": 19,
-      "firstName": "Noah",
-      "lastName": "Harris",
-      "phoneNumber": "222-333-4444",
-      "partner": "Company A",
-      "location": "City A",
+      "companyName": "Infinion Tech.",  
+      "startDate": "27/10/2022",
       "status": "Active"
     },
     {
       "id": 20,
-      "firstName": "Charlotte",
-      "lastName": "Turner",
-      "phoneNumber": "777-888-9999",
-      "partner": "Company B",
-      "location": "City B",
-      "status": "Awaiting Approval"
+      "companyName": "Infinion Tech.",   
+      "startDate": "27/10/2022",
+      "status": "Inactive"
+    },
+    {
+      "id": 21,
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Active"
+    },
+    {
+      "id": 22,
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Inactive"
+    },
+    {
+      "id": 23,
+      "companyName": "Infinion Tech.",      
+      "startDate": "27/10/2022",
+      "status": "Active"
+    },
+    {
+      "id": 24,
+      "companyName": "Infinion Tech.",
+      "startDate": "27/10/2022",
+      "status": "Active"
+    },
+    {
+      "id": 25,
+      "companyName": "Infinion Tech.",
+      "startDate": "27/10/2022",
+      "status": "Inactive"
+    },
+    {
+      "id": 26,
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Active"
+    },
+    {
+      "id": 27,
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Active"
+    },
+    {
+      "id": 28,
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Inactive"
+    },
+    {
+      "id": 29,
+      "companyName": "Infinion Tech.",  
+      "startDate": "27/10/2022",
+      "status": "Active"
+    },
+    {
+      "id": 30,
+      "companyName": "Infinion Tech.",      
+      "startDate": "27/10/2022",
+      "status": "Active"
+    },
+    {
+      "id": 31,
+      "companyName": "Infinion Tech.",
+      "startDate": "27/10/2022",
+      "status": "Inactive"
+    },
+    {
+      "id": 32,
+      "companyName": "Infinion Tech.",
+      "startDate": "27/10/2022",
+      "status": "Inctive"
+    },
+    {
+      "id": 33,
+      "companyName": "Infinion Tech.",   
+      "startDate": "27/10/2022",
+      "status": "Active"
+    },
+    {
+      "id": 34,
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Inactive"
+    },
+    {
+      "id": 35,
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Inctive"
+    },
+    {
+      "id": 36,
+      "companyName": "Infinion Tech.",     
+      "startDate": "27/10/2022",
+      "status": "Active"
+    },
+    {
+      "id": 37,
+      "companyName": "Infinion Tech.",  
+      "startDate": "27/10/2022",
+      "status": "Inactive"
+    },
+    {
+      "id": 38,
+      "companyName": "Infinion Tech.", 
+      "startDate": "27/10/2022",
+      "status": "Inctive"
+    },
+    {
+      "id": 39,
+      "companyName": "Infinion Tech.",  
+      "startDate": "27/10/2022",
+      "status": "Active"
+    },
+    {
+      "id": 40,
+      "companyName": "Infinion Tech.",   
+      "startDate": "27/10/2022",
+      "status": "Inactive"
     }
 ]
   

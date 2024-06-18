@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import {
   FaCalendarAlt,
@@ -9,9 +10,10 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { NewCampButton } from "../components";
-import Group from "../assets/Group.png"
+import Group from "../assets/Group.png";
+import { format } from "date-fns";
 
-const Overview = () => {
+const Overview = ({ onNewCampaignClick }) => {
   const [selectedDateRange, setSelectedDateRange] = useState([
     new Date(),
     new Date(),
@@ -25,7 +27,9 @@ const Overview = () => {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <div className="font-bold capitalize text-xl text-[#247b7b]">overview</div>
+        <div className="font-bold capitalize text-xl text-[#247b7b]">
+          overview
+        </div>
         <div className="flex items-center space-x-4">
           <div className="flex items-center border p-1 rounded-md">
             <FaCalendarAlt className="mr-2 text-[#247b7b]" />
@@ -42,12 +46,12 @@ const Overview = () => {
                 <div className="flex items-center p-1 rounded-md text-gray-500">
                   <span>
                     {selectedDateRange[0] &&
-                      selectedDateRange[0].toLocaleDateString()}
+                      format(selectedDateRange[0], "MMM d, yyyy")}
                   </span>
                   <span className="mx-1">-</span>
                   <span>
                     {selectedDateRange[1] &&
-                      selectedDateRange[1].toLocaleDateString()}
+                      format(selectedDateRange[1], "MMM d, yyyy")}
                   </span>
                   <FaChevronDown className="ml-2 text-[#247b7b] font-thin" />
                 </div>
@@ -63,7 +67,9 @@ const Overview = () => {
       <div className="text-center mt-14">
         <img src={Group} alt="Overview Image" className="mx-auto mb-6" />
         <p>No activity yet. Create a new campaign to get started</p>
-        <NewCampButton />
+        <div onClick={onNewCampaignClick}>
+          <NewCampButton />
+        </div>
       </div>
     </div>
   );

@@ -1,177 +1,156 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import AxiosMockAdapter from "axios-mock-adapter";
 import ReactPaginate from "react-paginate";
+import { AiFillLeftCircle, AiFillRightCircle } from "react-icons/ai";
+import { FiChevronDown } from "react-icons/fi";
+import { IconContext } from "react-icons";
 import { fetchData, fetchDataByStatus } from "../api.js";
-import { FiPlus } from "react-icons/fi";
-import { FaChevronDown, FaSearch } from "react-icons/fa";
-import { BiRadioCircle } from "react-icons/bi";
+import { FaRegEdit, FaRegEye } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
+import Search from "../components/Search.jsx";
 
 const Campaigns = () => {
-  const itemsPerPageOptions = [10, 5, 15];
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(itemsPerPageOptions[0]);
   const [tableData, setTableData] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
-  const [selectedOption, setSelectedOption] = useState("All");
-  //   const [activeMenu, setActiveMenu] = useState("Verifiers");
+  const [selectedTab, setSelectedTab] = useState("all");
+  const itemsPerPage = 10; // Define itemsPerPage
 
   useEffect(() => {
-    // Create a new instance of AxiosMockAdapter
-    const mock = new AxiosMockAdapter(axios);
-    // Mock any GET request to /data
-    // arguments for reply are (status, data, headers)
-    // mock.onGet("/data").reply(200, {
-    //   data: fetchData.data, // replace this with your mock data
-    //   totalItems: fetchData.totalItems, // replace this with your mock totalItems
-    // });
-
-    // Simulate fetching data from API
-    const statusMapping = {
-      "Active Verifiers": "Active",
-      "Pending Verifiers": "Awaiting Approval",
-      "Deactivated Verifiers": "Deactivated",
-    };
-
     const fetchTableData = async () => {
       let response;
-      if (selectedOption === "All") {
+      if (selectedTab === "all") {
         response = await fetchData(currentPage, itemsPerPage);
       } else {
-        const status = statusMapping[selectedOption];
+        const status =
+          selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1); // Correctly map tab to status
         response = await fetchDataByStatus(currentPage, itemsPerPage, status);
       }
       setTableData(response.data);
       setTotalItems(response.totalItems);
-
-      mock.onGet("/data").reply(200, {
-        data: response.data,
-        totalItems: response.totalItems,
-      });
     };
 
     fetchTableData();
-  }, [currentPage, itemsPerPage, selectedOption]);
+  }, [currentPage, selectedTab]);
 
-  const handleOptionChange = (e) => {
-    setSelectedOption(e.target.value);
-    // Reset to the first page when the option is changed
-    setCurrentPage(1);
+  
+  const handleTabChange = (tab) => {
+    setSelectedTab(tab);
   };
 
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage.selected + 1);
   };
 
-  const handleItemsPerPageChange = (e) => {
-    setItemsPerPage(Number(e.target.value));
-  };
+  // Calculate start and end indices for pagination info
+  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className="p-6">
+    <div className="p-4">
+      <div className="font-bold capitalize text-xl text-[#247b7b] mb-4">
+        all campaigns
+      </div>
+
       <div className="flex justify-between items-center mb-6">
-        <select
-          value={selectedOption}
-          onChange={handleOptionChange}
-          className="border p-2 bg-[#ffffff] cursor-pointer"
-        >
-          <option className="">All</option>
-          <option>Active Verifiers</option>
-          <option>Pending Verifiers</option>
-          <option>Deactivated Verifiers</option>
-        </select>
+        <div className="flex space-x-2">
+          <button
+            onClick={() => handleTabChange("all")}
+            className={`px-4 py-2 ${
+              selectedTab === "all"
+                ? "bg-white text-[#247b7b]  border border-[#247b7b]"
+                : "bg-white text-gray-700 border border-gray-300"
+            } rounded-md`}
+          >
+            All (90)
+          </button>
+          <button
+            onClick={() => handleTabChange("inactive")}
+            className={`px-4 py-2 ${
+              selectedTab === "inactive"
+                ? "bg-white text-[#247b7b] border border-[#247b7b]"
+                : "bg-white text-gray-700 border border-gray-300"
+            } rounded-md`}
+          >
+            Inactive (90)
+          </button>
+          <button
+            onClick={() => handleTabChange("active")}
+            className={`px-4 py-2 ${
+              selectedTab === "active"
+                ? "bg-white text-[#247b7b] border border-[#247b7b]"
+                : "bg-white text-gray-700 border border-gray-300"
+            } rounded-md`}
+          >
+            Active (90)
+          </button>
+        </div>
+
         <div className="flex">
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-              <FaSearch className="text-gray-400" />
-            </span>
-            <input
-              className="border pl-8 pr-2 py-2 text-[#c4c4c4] text-[12px]"
-              placeholder="Name/Phone no / Location"
-            />
-          </div>
-          <button className="bg-[#039BF0] rounded text-white p-2 ml-2 text-[14px] flex items-center">
-            <FiPlus className="mr-2 " /> Add new Verifier
+          <Search />
+          <button
+            className="rounded text-[#666666] p-2 ml-2 text-[.875rem] border flex items-center"
+           
+          >
+            Filter by date <FiChevronDown className="ml-2" />
           </button>
         </div>
       </div>
 
       <table className="w-full overflow-hidden shadow-lg bg-[#ffffff]">
         <thead className="">
-          <tr className="border-b">
-            <th className="p-4">
-              <input type="checkbox" />
+          <tr className="border-b bg-[#f0f4f4]">
+            <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left">
+              S/N
             </th>
-            <th className="p-4 text-[#1A1619] font-bold text-[14px] text-left">
-              First Name
+            <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left capitalize">
+              campaign name
             </th>
-            <th className="p-4 text-[#1A1619] font-bold text-[14px] text-left">
-              Last Name
+            <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left capitalize">
+              start date
             </th>
-            <th className="p-4 text-[#1A1619] font-bold text-[14px] text-left">
-              Phone Number
-            </th>
-            <th className="p-4 text-[#1A1619] font-bold text-[14px] text-left">
-              Partner
-            </th>
-            <th className="p-4 text-[#1A1619] font-bold text-[14px] text-left">
-              Location
-            </th>
-            <th className="p-4 text-[#1A1619] font-bold text-[14px] text-left">
+            <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left">
               Status
             </th>
-            <th className="p-4 text-[#1A1619] font-bold text-[14px] text-left">
+            <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left">
               Actions
             </th>
           </tr>
         </thead>
         <tbody>
           {tableData.map((item, index) => (
-            <tr key={index.id} className="border-b">
-              <td className="p-4 text-[#1A1619] text-[14px]">
-                <input type="checkbox" />
+            <tr key={item.id} className="border-b">
+              <td className="p-4 text-[#666666] text-[.875rem]">
+                {index + 1}.
               </td>
-              <td className="p-4 text-[#1A1619] text-[14px]">
-                {item.firstName}
+              <td className="p-4 text-[#666666] text-[.875rem]">
+                {item.companyName}
               </td>
-              <td className="p-4 text-[#1A1619] text-[14px]">
-                {item.lastName}
+              <td className="p-4 text-[#666666] text-[.875rem]">
+                {item.startDate}
               </td>
-              <td className="p-4 text-[#1A1619] text-[14px]">
-                {item.phoneNumber}
-              </td>
-              <td className="p-4 text-[#1A1619] text-[14px]">{item.partner}</td>
-              <td className="p-4 text-[#1A1619] text-[14px]">
-                {item.location}
-              </td>
-              <td className="p-4 text-[#1A1619] text-[14px]">
+              <td className="p-4 text-[#666666] text-[.875rem]">
                 <div
-                  className={`status ${item.status.toLowerCase()} 
+                  className={`status ${item.status.toUpperCase()} 
           ${
             item.status === "Active"
-              ? "text-green-600 bg-green-100 rounded-lg p-1 text-xs font-semibold inline-block py-1 px-2 last:mr-0 mr-1 text-[14px]"
+              ? "text-[#009918] rounded-lg p-1 text-xs font-semibold inline-block text-[.875rem] uppercase"
               : ""
           }
           ${
-            item.status === "Awaiting Approval"
-              ? "text-orange-600 bg-orange-100 rounded-lg p-1 text-xs font-semibold inline-block py-1 px-2 last:mr-0 mr-1 text-[14px]"
+            item.status === "Inactive"
+              ? "text-[#990000] rounded-lg p-1 text-xs font-semibold inline-block text-[.875rem] uppercase"
               : ""
-          }
-          ${
-            item.status === "Deactivated"
-              ? "text-red-500 bg-red-100 rounded-lg p-1 text-xs font-semibold inline-block py-1 px-2 last:mr-0 mr-1 text-[14px]"
-              : ""
-          }
+          }          
         `}
                 >
                   {item.status}
                 </div>
               </td>
-              <td className="p-4">
-                <span className="flex">
-                  <BiRadioCircle size={6} />
-                  <BiRadioCircle size={6} />
-                  <BiRadioCircle size={6} />
+              <td className="p-4 text-[#666666]">
+                <span className="flex gap-4">
+                  <FaRegEye />
+                  <FaRegEdit />
+                  <FaTrash />
                 </span>
               </td>
             </tr>
@@ -180,37 +159,32 @@ const Campaigns = () => {
       </table>
 
       <div className="flex justify-between w-full overflow-hidden p-6 shadow-lg bg-[#ffffff]">
-        <div className="flex items-center">
-          <label className="mr-2 text-[#808080] text-[12px]">
-            Roles per page
-          </label>
-          <div className="relative">
-            <select
-              onChange={handleItemsPerPageChange}
-              className="block appearance-none bg-white border border-gray-400 text-[#1A1619] py-2 px-2 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            >
-              {itemsPerPageOptions.map((option, index) => (
-                <option key={index} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-              <FaChevronDown className="text-[#1A1619] h-4 w-4" />
-            </div>
-          </div>
-        </div>
-
-        <div className="pagination-container">
+        <div>
           <ReactPaginate
             pageCount={Math.ceil(totalItems / itemsPerPage)}
             onPageChange={handlePageChange}
-            containerClassName="pagination"
-            pageClassName="pagination-item"
-            previousLabel={"Previous"}
-            nextLabel={"Next"}
-            activeClassName="active"
+            containerClassName={"pagination"}
+            pageClassName={"pagination-item"}
+            previousLabel={
+              <IconContext.Provider
+                value={{ color: "#B8C1CC", size: "1.875rem" }}
+              >
+                <AiFillLeftCircle />
+              </IconContext.Provider>
+            }
+            nextLabel={
+              <IconContext.Provider
+                value={{ color: "#B8C1CC", size: "1.875rem" }}
+              >
+                <AiFillRightCircle />
+              </IconContext.Provider>
+            }
+            activeClassName={"active-page"}
+            breakLabel={"..."}
           />
+        </div>
+        <div className="">
+          Showing {startIndex} to {endIndex} of {totalItems} results
         </div>
       </div>
     </div>

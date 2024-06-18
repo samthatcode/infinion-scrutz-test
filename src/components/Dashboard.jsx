@@ -4,12 +4,11 @@ import {
   FaFreeCodeCamp,
   FaRegBell,
   FaRegQuestionCircle,
-  FaSearch,
 } from "react-icons/fa";
 import { Sidebar, Menu, MenuItem, useProSidebar } from "react-pro-sidebar";
 import {
   Overview,
-  // NewCampaign,
+  NewCampaign,
   Campaigns,
   MarketIntelligence,
   AccountSettings,
@@ -17,6 +16,7 @@ import {
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import NewCampButton from "./NewCampButton";
+import Search from "./Search";
 
 const Dashboard = () => {
   const { collapseSidebar } = useProSidebar();
@@ -27,27 +27,33 @@ const Dashboard = () => {
   const renderComponent = () => {
     switch (activeComponent) {
       case "overview":
-        return <Overview />;
+        return <Overview onNewCampaignClick={handleNewCampaignClick} />;
       case "campaign":
         return <Campaigns />;
       case "market-intelligence":
         return <MarketIntelligence />;
       case "account-settings":
         return <AccountSettings />;
+      case "new-campaign":
+        return <NewCampaign />;
       default:
-        return <Overview />;
+        return <Overview onNewCampaignClick={handleNewCampaignClick} />;
     }
   };
 
+  const handleNewCampaignClick = () => {
+    setActiveComponent("new-campaign");
+  };
+
   return (
-    <div style={({ height: "100vh" }, { display: "flex" })}>
+    <div style={{ height: "100vh", display: "flex" }}>
       <Sidebar
         style={{
           height: "100vh",
           backgroundColor: "#f0f4f4",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",          
+          justifyContent: "space-between",
         }}
       >
         <Menu>
@@ -60,8 +66,10 @@ const Dashboard = () => {
           >
             <h2 className="capitalize">scrutz</h2>
           </MenuItem>
-          <div className="my-11">
-            <NewCampButton />
+          <div className="my-11 mx-2">
+            <button onClick={() => setActiveComponent("new-campaign")}>
+              <NewCampButton />
+            </button>
           </div>
           <MenuItem
             icon={<FaFreeCodeCamp size={25} />}
@@ -125,9 +133,9 @@ const Dashboard = () => {
           <small className="text-[#707070] text-center my-3">
             We&#39;re readily available to provide help
           </small>
-          <smalll className="text-[#247b7b] border border-[#247b7b] px-4 py-1 rounded font-medium">
+          <small className="text-[#247b7b] border border-[#247b7b] px-4 py-1 rounded font-medium">
             Get help
-          </smalll>
+          </small>
         </div>
       </Sidebar>
 
@@ -141,19 +149,11 @@ const Dashboard = () => {
           }}
           className="mx-10"
         >
-          <div className="flex items-center relative">
-            <input
-              type="text"
-              placeholder="Search"
-              className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#247b7b]"
-              style={{ paddingRight: "7.5rem" }}
-            />
-            <FaSearch className="absolute right-4 text-gray-500" />
-          </div>
+          <Search />
           <div className="relative">
             <div className="flex items-center">
               <div className="relative">
-                <FaRegBell className="text-2xl ml-4" />                
+                <FaRegBell className="text-2xl ml-4" />
               </div>
               <img
                 src={`/images/${
@@ -192,7 +192,7 @@ const Dashboard = () => {
             )}
           </div>
         </header>
-          <hr />
+        <hr />
         {renderComponent()}
       </main>
     </div>
