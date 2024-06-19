@@ -1,19 +1,38 @@
 import { useState, useEffect } from "react";
 import ReactPaginate from "react-paginate";
-import { AiFillLeftCircle, AiFillRightCircle } from "react-icons/ai";
+import {
+  AiFillLeftCircle,
+  AiFillRightCircle,
+  AiOutlineArrowLeft,
+} from "react-icons/ai";
 import { FiChevronDown } from "react-icons/fi";
 import { IconContext } from "react-icons";
 import { fetchData, fetchDataByStatus } from "../api.js";
-import { FaRegEdit, FaRegEye } from "react-icons/fa";
-import { FaTrash } from "react-icons/fa";
+// import { getAllCampaigns } from '../api';
+import { FaRegEdit, FaRegEye, FaTrash } from "react-icons/fa";
 import Search from "../components/Search.jsx";
+import CampaignDetails from "./CampaignDetails.jsx";
 
 const Campaigns = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [tableData, setTableData] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [selectedTab, setSelectedTab] = useState("all");
-  const itemsPerPage = 10; // Define itemsPerPage
+  const itemsPerPage = 10;
+
+  const [selectedCampaignId, setSelectedCampaignId] = useState(null);
+
+  // const [campaigns, setCampaigns] = useState([]);
+
+  // useEffect(() => {
+  //   getAllCampaigns()
+  //     .then(response => {
+  //       setCampaigns(response.data);
+  //     })
+  //     .catch(error => {
+  //       console.error("There was an error fetching the campaigns!", error);
+  //     });
+  // }, []);
 
   useEffect(() => {
     const fetchTableData = async () => {
@@ -32,7 +51,6 @@ const Campaigns = () => {
     fetchTableData();
   }, [currentPage, selectedTab]);
 
-  
   const handleTabChange = (tab) => {
     setSelectedTab(tab);
   };
@@ -44,6 +62,18 @@ const Campaigns = () => {
   // Calculate start and end indices for pagination info
   const startIndex = (currentPage - 1) * itemsPerPage + 1;
   const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
+
+  if (selectedCampaignId !== null) {
+    return (
+      <div>
+        <div className="flex items-center gap-1">
+          <AiOutlineArrowLeft className="font-semibold" />
+          <button onClick={() => setSelectedCampaignId(null)}>Back</button>
+        </div>
+        <CampaignDetails campaignId={selectedCampaignId} />
+      </div>
+    );
+  }
 
   return (
     <div className="p-4">
@@ -87,10 +117,7 @@ const Campaigns = () => {
 
         <div className="flex">
           <Search />
-          <button
-            className="rounded text-[#666666] p-2 ml-2 text-[.875rem] border flex items-center"
-           
-          >
+          <button className="rounded text-[#666666] p-2 ml-2 text-[.875rem] border flex items-center">
             Filter by date <FiChevronDown className="ml-2" />
           </button>
         </div>
@@ -148,7 +175,15 @@ const Campaigns = () => {
               </td>
               <td className="p-4 text-[#666666]">
                 <span className="flex gap-4">
-                  <FaRegEye />
+                  {/* <Link to={`/campaign/${campaign.id}`}>
+                
+                </Link> */}
+                  <FaRegEye
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setSelectedCampaignId(item.id);
+                    }}
+                  />
                   <FaRegEdit />
                   <FaTrash />
                 </span>

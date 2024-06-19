@@ -5,28 +5,39 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Toggle from "react-toggle";
 import "react-toggle/style.css";
-import axios from "axios";
+import { createCampaign } from '../api';
 
 const NewCampaign = () => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [receiveDigest, setReceiveDigest] = useState(false);
+  const [campaignName, setCampaignName] = useState('');
+  const [campaignDescription, setCampaignDescription] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [digestCampaign, setDigestCampaign] = useState(false);
+  const [linkedKeywords, setLinkedKeywords] = useState('');
+  const [dailyDigest, setDailyDigest] = useState(''); 
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios
-      .post("YOUR_BACKEND_API_URL/campaigns", { name, description })
-      .then((response) => {
-        console.log(Response, response);
-        navigate("/");
+    const campaign = {
+      campaignName,
+      campaignDescription,
+      startDate,
+      endDate,
+      digestCampaign,
+      linkedKeywords: linkedKeywords.split(',').map(keyword => keyword.trim()),
+      dailyDigest,
+    };
+    createCampaign(campaign)
+      .then(response => {
+        navigate('/');
       })
-      .catch((error) => {
+      .catch(error => {
         console.error("There was an error creating the campaign!", error);
       });
   };
+
+
 
   return (
     <div className="p-6">
@@ -41,8 +52,8 @@ const NewCampaign = () => {
           </label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={campaignName}
+            onChange={(e) => setCampaignName(e.target.value)}
             placeholder="e.g. The future is now"
             // className="mt-1 p-2 border rounded w-full"
             className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -54,8 +65,8 @@ const NewCampaign = () => {
             Campaign Description
           </label>
           <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            value={campaignDescription}
+            onChange={(e) => setCampaignDescription(e.target.value)}
             // className="mt-1 p-2 border rounded w-full"
             placeholder="Please add a description to your campaign"
             className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -96,8 +107,8 @@ const NewCampaign = () => {
         <div className="mb-4 flex items-center justify-between text-[#666666]">
           <span>Want to receive daily digest about the campaign?</span>
           <Toggle
-            checked={receiveDigest}
-            onChange={() => setReceiveDigest(!receiveDigest)}
+            checked={digestCampaign}
+            onChange={() => setDigestCampaign(!digestCampaign)}
             className="custom-classname"
             icons={false}
           />
@@ -110,8 +121,11 @@ const NewCampaign = () => {
             <FaAsterisk size={5} className="inline text-red-500 absolute" />
           </label>
           <textarea
+          value={linkedKeywords}
+          onChange={(e) => setLinkedKeywords(e.target.value)}
             placeholder="To add keywords, type your keyword and press enter"
             className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
           ></textarea>
         </div>
 
@@ -124,6 +138,8 @@ const NewCampaign = () => {
             <select
               className="px-4 py-2 border rounded appearance-none w-auto cursor-pointer bg-white text-[#666666]"
               style={{ paddingRight: "30px", minWidth: "150px" }}
+              value={dailyDigest}
+              onChange={(e) => setDailyDigest(e.target.value)}
             >
               <option>Select</option>
               <option value="daily">Daily</option>

@@ -30,3 +30,20 @@ export const fetchDataByStatus = async (page, itemsPerPage, status) => {
     totalItems: filteredData.length,
   };
 };
+
+
+import axios from 'axios';
+
+const API_BASE_URL = 'https://infinion-test-int-test.azurewebsites.net';
+
+export const getAllCampaigns = () => axios.get(`${API_BASE_URL}/api/Campaign`);
+
+export const getCampaignById = (id) => axios.get(`${API_BASE_URL}/api/Campaign/${id}`);
+
+export const createCampaign = (campaign) => axios.post(`${API_BASE_URL}/api/Campaign`, campaign);
+
+export const updateCampaign = (id, campaign) => axios.put(`${API_BASE_URL}/api/Campaign/${id}`, campaign);
+
+export const deleteCampaign = (id) => axios.delete(`${API_BASE_URL}/api/Campaign/${id}`);
+
+export const updateCampaignStatus = (id, status) => axios.put(`${API_BASE_URL}/api/CampaignStatus/${id}`, { campaignStatus: status });

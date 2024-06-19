@@ -12,6 +12,10 @@ import {
   Campaigns,
   MarketIntelligence,
   AccountSettings,
+  BrandHealth,
+  Feeds,
+  Influencers,
+  CompetitorInsights,
 } from "../pages";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -36,6 +40,14 @@ const Dashboard = () => {
         return <AccountSettings />;
       case "new-campaign":
         return <NewCampaign />;
+      case "feeds":
+        return <Feeds />;
+      case "brand-health":
+        return <BrandHealth />;
+      case "competitor-insights":
+        return <CompetitorInsights />;
+      case "influencers":
+        return <Influencers />;
       default:
         return <Overview onNewCampaignClick={handleNewCampaignClick} />;
     }
@@ -109,6 +121,55 @@ const Dashboard = () => {
             }}
           >
             Market Intelligence
+          </MenuItem>
+          <MenuItem
+            icon={<FaFreeCodeCamp size={25} />}
+            onClick={() => setActiveComponent("feeds")}
+            style={{
+              backgroundColor:
+                activeComponent === "feeds" ? "#ffffff" : "transparent",
+              color: activeComponent === "feeds" ? "#247b7b" : "inherit",
+            }}
+          >
+            Feeds
+          </MenuItem>
+          <MenuItem
+            icon={<FaFreeCodeCamp size={25} />}
+            onClick={() => setActiveComponent("brand-health")}
+            style={{
+              backgroundColor:
+                activeComponent === "brand-health" ? "#ffffff" : "transparent",
+              color: activeComponent === "brand-health" ? "#247b7b" : "inherit",
+            }}
+          >
+            Brand Health
+          </MenuItem>
+          <MenuItem
+            icon={<FaFreeCodeCamp size={25} />}
+            onClick={() => setActiveComponent("influencers")}
+            style={{
+              backgroundColor:
+                activeComponent === "influencers" ? "#ffffff" : "transparent",
+              color: activeComponent === "influencers" ? "#247b7b" : "inherit",
+            }}
+          >
+            Influencers
+          </MenuItem>
+          <MenuItem
+            icon={<FaFreeCodeCamp size={25} />}
+            onClick={() => setActiveComponent("competitor-insights")}
+            style={{
+              backgroundColor:
+                activeComponent === "competitor-insights"
+                  ? "#ffffff"
+                  : "transparent",
+              color:
+                activeComponent === "competitor-insights"
+                  ? "#247b7b"
+                  : "inherit",
+            }}
+          >
+            Competitor Insights
           </MenuItem>
           <MenuItem
             icon={<FaFreeCodeCamp size={25} />}
