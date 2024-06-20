@@ -7,9 +7,8 @@ import {
 } from "react-icons/ai";
 import { FiChevronDown } from "react-icons/fi";
 import { IconContext } from "react-icons";
-import { fetchData, fetchDataByStatus } from "../api.js";
-// import { getAllCampaigns } from '../api';
-import { FaRegEdit, FaRegEye, FaTrash } from "react-icons/fa";
+import { getAllCampaigns } from "../api";
+import { FaRegEdit, FaRegEye, FaTrash, FaSpinner } from "react-icons/fa";
 import Search from "../components/Search.jsx";
 import CampaignDetails from "./CampaignDetails.jsx";
 
@@ -19,33 +18,28 @@ const Campaigns = () => {
   const [totalItems, setTotalItems] = useState(0);
   const [selectedTab, setSelectedTab] = useState("all");
   const itemsPerPage = 10;
-
   const [selectedCampaignId, setSelectedCampaignId] = useState(null);
-
-  // const [campaigns, setCampaigns] = useState([]);
-
-  // useEffect(() => {
-  //   getAllCampaigns()
-  //     .then(response => {
-  //       setCampaigns(response.data);
-  //     })
-  //     .catch(error => {
-  //       console.error("There was an error fetching the campaigns!", error);
-  //     });
-  // }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchTableData = async () => {
-      let response;
-      if (selectedTab === "all") {
-        response = await fetchData(currentPage, itemsPerPage);
-      } else {
+      setIsLoading(true);
+      const response = await getAllCampaigns(currentPage, itemsPerPage);
+      let data = response.data;
+
+      if (selectedTab !== "all") {
         const status =
           selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1); // Correctly map tab to status
-        response = await fetchDataByStatus(currentPage, itemsPerPage, status);
+        data = data.filter(
+          (item) =>
+            item.campaignStatus.trim().toLowerCase() ===
+            status.trim().toLowerCase()
+        );
       }
-      setTableData(response.data);
+
+      setTableData(data);
       setTotalItems(response.totalItems);
+      setIsLoading(false);
     };
 
     fetchTableData();
@@ -59,6 +53,10 @@ const Campaigns = () => {
     setCurrentPage(selectedPage.selected + 1);
   };
 
+  const handleCloseDetails = () => {
+    setSelectedCampaignId(null);
+  };
+
   // Calculate start and end indices for pagination info
   const startIndex = (currentPage - 1) * itemsPerPage + 1;
   const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
@@ -70,7 +68,7 @@ const Campaigns = () => {
           <AiOutlineArrowLeft className="font-semibold" />
           <button onClick={() => setSelectedCampaignId(null)}>Back</button>
         </div>
-        <CampaignDetails campaignId={selectedCampaignId} />
+        <CampaignDetails campaignId={selectedCampaignId} onClose={handleCloseDetails} />
       </div>
     );
   }
@@ -122,77 +120,78 @@ const Campaigns = () => {
           </button>
         </div>
       </div>
-
-      <table className="w-full overflow-hidden shadow-lg bg-[#ffffff]">
-        <thead className="">
-          <tr className="border-b bg-[#f0f4f4]">
-            <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left">
-              S/N
-            </th>
-            <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left capitalize">
-              campaign name
-            </th>
-            <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left capitalize">
-              start date
-            </th>
-            <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left">
-              Status
-            </th>
-            <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left">
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {tableData.map((item, index) => (
-            <tr key={item.id} className="border-b">
-              <td className="p-4 text-[#666666] text-[.875rem]">
-                {index + 1}.
-              </td>
-              <td className="p-4 text-[#666666] text-[.875rem]">
-                {item.companyName}
-              </td>
-              <td className="p-4 text-[#666666] text-[.875rem]">
-                {item.startDate}
-              </td>
-              <td className="p-4 text-[#666666] text-[.875rem]">
-                <div
-                  className={`status ${item.status.toUpperCase()} 
+      {isLoading ? (
+        <div className="flex justify-center items-center">
+          <FaSpinner className="animate-spin text-2xl text-[#247b7b]" />
+        </div>
+      ) : (
+        <table className="w-full overflow-hidden shadow-lg bg-[#ffffff]">
+          <thead className="">
+            <tr className="border-b bg-[#f0f4f4]">
+              <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left">
+                S/N
+              </th>
+              <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left capitalize">
+                campaign name
+              </th>
+              <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left capitalize">
+                start date
+              </th>
+              <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left">
+                Status
+              </th>
+              <th className="p-4 text-[#1A1619] font-bold text-[.875rem] text-left">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.map((item, index) => (
+              <tr key={item.id} className="border-b">
+                <td className="p-4 text-[#666666] text-[.875rem]">
+                  {index + 1}.
+                </td>
+                <td className="p-4 text-[#666666] text-[.875rem]">
+                  {item.campaignName}
+                </td>
+                <td className="p-4 text-[#666666] text-[.875rem]">
+                  {item.startDate}
+                </td>
+                <td className="p-4 text-[#666666] text-[.875rem]">
+                  <div
+                    className={`status ${item.campaignStatus.toUpperCase()} 
           ${
-            item.status === "Active"
+            item.campaignStatus === "Active"
               ? "text-[#009918] rounded-lg p-1 text-xs font-semibold inline-block text-[.875rem] uppercase"
               : ""
           }
           ${
-            item.status === "Inactive"
+            item.campaignStatus === "Inactive"
               ? "text-[#990000] rounded-lg p-1 text-xs font-semibold inline-block text-[.875rem] uppercase"
               : ""
           }          
         `}
-                >
-                  {item.status}
-                </div>
-              </td>
-              <td className="p-4 text-[#666666]">
-                <span className="flex gap-4">
-                  {/* <Link to={`/campaign/${campaign.id}`}>
-                
-                </Link> */}
-                  <FaRegEye
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setSelectedCampaignId(item.id);
-                    }}
-                  />
-                  <FaRegEdit />
-                  <FaTrash />
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
+                  >
+                    {item.campaignStatus}
+                  </div>
+                </td>
+                <td className="p-4 text-[#666666]">
+                  <span className="flex gap-4">
+                    <FaRegEye
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setSelectedCampaignId(item.id);
+                      }}
+                    />
+                    <FaRegEdit />
+                    <FaTrash />
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
       <div className="flex justify-between w-full overflow-hidden p-6 shadow-lg bg-[#ffffff]">
         <div>
           <ReactPaginate

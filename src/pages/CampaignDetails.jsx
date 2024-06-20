@@ -1,47 +1,42 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { getCampaignById, updateCampaign, deleteCampaign } from "../api";
+import {
+  getCampaignById,
+  updateCampaign,
+  deleteCampaign,
+  updateCampaignStatus,
+} from "../api";
 import Modal from "react-modal";
-// import { updateCampaignStatus } from "../api";
-import { FaCheckCircle, FaChevronDown } from "react-icons/fa";
+Modal.setAppElement("#root");
+import { FaChevronDown, FaSpinner } from "react-icons/fa";
 
-const CampaignDetails = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [campaign, setCampaign] = useState({
-    campaignName: "",
-    campaignDescription: "",
-    startDate: "",
-    endDate: "",
-    digestCampaign: false,
-    linkedKeywords: "",
-    dailyDigest: "",
-  });
-
+const CampaignDetails = ({ campaignId, onClose }) => {
+  const [campaign, setCampaign] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
+  const [campaignStatus, setCampaignStatus] = useState("");
 
   useEffect(() => {
-    getCampaignById(id)
-      .then((response) => {
-        const data = response.data;
-        setCampaign({
-          campaignName: data.campaignName,
-          campaignDescription: data.campaignDescription,
-          startDate: data.startDate,
-          endDate: data.endDate,
-          digestCampaign: data.digestCampaign,
-          linkedKeywords: data.linkedKeywords.join(", "),
-          dailyDigest: data.dailyDigest,
+    if (campaignId) {
+      getCampaignById(campaignId)
+        .then((response) => {
+          const data = response.data;
+          setCampaign({
+            campaignName: data.campaignName,
+            campaignDescription: data.campaignDescription,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            digestCampaign: data.digestCampaign,
+            linkedKeywords: data.linkedKeywords.join(", "),
+            dailyDigest: data.dailyDigest,
+          });
+          setCampaignStatus(data.campaignStatus); // Set campaign status
+        })
+        .catch((error) => {
+          console.error("Error fetching campaign details:", error);
         });
-      })
-      .catch((error) => {
-        console.error(
-          "There was an error fetching the campaign details!",
-          error
-        );
-      });
-  }, [id]);
+    }
+  }, [campaignId]);
 
   const handleEdit = () => {
     const updatedCampaign = {
@@ -50,9 +45,9 @@ const CampaignDetails = () => {
         .split(",")
         .map((keyword) => keyword.trim()),
     };
-    updateCampaign(id, updatedCampaign)
+    updateCampaign(campaignId, updatedCampaign)
       .then((response) => {
-        navigate("/");
+        console.log("Campaign updated successfully:", response.data);
       })
       .catch((error) => {
         console.error("There was an error updating the campaign!", error);
@@ -60,62 +55,14 @@ const CampaignDetails = () => {
   };
 
   const handleDelete = () => {
-    deleteCampaign(id)
-      .then((response) => {
+    deleteCampaign(campaignId)
+      .then(() => {
         setIsDeleted(true);
       })
       .catch((error) => {
         console.error("There was an error deleting the campaign!", error);
       });
   };
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // Inside CampaignDetails component, below other state declarations
-  const [campaignStatus, setCampaignStatus] = useState(false);
-
-  useEffect(() => {
-    getCampaignById(id)
-      .then((response) => {
-        const data = response.data;
-        setCampaign({
-          campaignName: data.campaignName,
-          campaignDescription: data.campaignDescription,
-          startDate: data.startDate,
-          endDate: data.endDate,
-          digestCampaign: data.digestCampaign,
-          linkedKeywords: data.linkedKeywords.join(", "),
-          dailyDigest: data.dailyDigest,
-        });
-        setCampaignStatus(data.campaignStatus === "active");
-      })
-      .catch((error) => {
-        console.error(
-          "There was an error fetching the campaign details!",
-          error
-        );
-      });
-  }, [id]);
-
-  // const handleStatusChange = () => {
-  //   updateCampaignStatus(id, !campaignStatus)
-  //     .then((response) => {
-  //       setCampaignStatus(!campaignStatus);
-  //     })
-  //     .catch((error) => {
-  //       console.error(
-  //         "There was an error updating the campaign status!",
-  //         error
-  //       );
-  //     });
-  // };
-
-  // Inside the return statement of CampaignDetails component
-  // <button
-  //   onClick={handleStatusChange}
-  //   className="bg-green-500 text-white px-4 py-2 rounded mr-2"
-  // >
-  //   {campaignStatus ? "Deactivate" : "Activate"} Campaign
-  // </button>;
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -124,9 +71,17 @@ const CampaignDetails = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     if (isDeleted) {
-      navigate("/");
+      onClose();
     }
   };
+
+  if (!campaign) {
+    return (
+      <div className="flex justify-center items-center">
+        <FaSpinner className="animate-spin text-2xl text-[#247b7b]" />
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -139,7 +94,7 @@ const CampaignDetails = () => {
             <span>Campaign Status</span>
           </div>
           <span>|</span>
-          <span className="pl-2">Current Status Here</span>
+          <span className="pl-2 capitalize ">{campaignStatus}</span>
         </div>
       </div>
       <div className="mb-4">
@@ -167,7 +122,6 @@ const CampaignDetails = () => {
         <div className="mb-4">
           <label className="block text-gray-700">Start Date</label>
           <input
-            placeholder="dd/mm/yy"
             value={campaign.startDate}
             onChange={(e) =>
               setCampaign({ ...campaign, startDate: e.target.value })
@@ -178,7 +132,6 @@ const CampaignDetails = () => {
         <div className="mb-4">
           <label className="block text-gray-700">End Date</label>
           <input
-            placeholder="dd/mm/yy"
             value={campaign.endDate}
             onChange={(e) =>
               setCampaign({ ...campaign, endDate: e.target.value })
@@ -262,31 +215,45 @@ const CampaignDetails = () => {
       >
         {!isDeleted ? (
           <>
-            <h4 className="text-xl mb-4">
-              Are you sure you want to delete MTN campaign?
-            </h4>
-            <p>This action cannot be undone</p>
-            <button
-              onClick={handleDelete}
-              className="bg-red-500 text-white px-4 py-2 rounded mr-2"
-            >
-              Delete Campaign
-            </button>
-            <button
-              onClick={closeModal}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              Cancel
-            </button>
+            <div className="my-14">
+              <h2 className="capitalize text-xl mb-10 text-[#000]">
+                stop campaign
+              </h2>
+              <small className="text-base mb-4 text-[#666666]">
+                Are you sure you want to delete MTN campaign?
+              </small>
+              <br />
+              <small className=" text-[#666666]">
+                This action cannot be undone
+              </small>
+            </div>
+            <div className="space-x-4">
+              <button
+                onClick={closeModal}
+                className="bg-white text-[#404040] border border-[#435a6b] px-6 py-2 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="bg-[#990000] text-white px-4 py-2 rounded"
+              >
+                Delete Campaign
+              </button>
+            </div>
           </>
         ) : (
           <>
             <div className="flex flex-col items-center">
-              <FaCheckCircle className="text-green-500 text-4xl mb-4" />
-              <h2 className="text-xl mb-4">Campaign successfully deleted!</h2>
+              <h2 className="capitalize text-xl mb-10 text-[#000]">
+                Campaign deleted
+              </h2>
+              <small className="text-sm mb-10 text-[#666666]">
+                MTN campaign has been deleted
+              </small>
               <button
                 onClick={closeModal}
-                className="bg-blue-500 text-white px-4 py-2 rounded"
+                className="bg-[#247b7b] text-white px-6 py-2 rounded text-sm"
               >
                 Go back to campaign list
               </button>

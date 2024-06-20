@@ -1,43 +1,73 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FaAsterisk, FaChevronDown } from "react-icons/fa";
+import {
+  FaAsterisk,
+  FaCheckCircle,
+  FaChevronDown,
+  FaSpinner,
+} from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Toggle from "react-toggle";
 import "react-toggle/style.css";
-import { createCampaign } from '../api';
+import { createCampaign } from "../api";
+import Modal from "react-modal";
+Modal.setAppElement("#root");
 
 const NewCampaign = () => {
-  const [campaignName, setCampaignName] = useState('');
-  const [campaignDescription, setCampaignDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [campaignName, setCampaignName] = useState("");
+  const [campaignDescription, setCampaignDescription] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [digestCampaign, setDigestCampaign] = useState(false);
-  const [linkedKeywords, setLinkedKeywords] = useState('');
-  const [dailyDigest, setDailyDigest] = useState(''); 
-  const navigate = useNavigate();
+  const [linkedKeywords, setLinkedKeywords] = useState("");
+  const [dailyDigest, setDailyDigest] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const campaign = {
       campaignName,
       campaignDescription,
       startDate,
       endDate,
       digestCampaign,
-      linkedKeywords: linkedKeywords.split(',').map(keyword => keyword.trim()),
+      linkedKeywords: linkedKeywords
+        .split(",")
+        .map((keyword) => keyword.trim()),
       dailyDigest,
     };
-    createCampaign(campaign)
-      .then(response => {
-        navigate('/');
-      })
-      .catch(error => {
-        console.error("There was an error creating the campaign!", error);
-      });
+    try {
+      const response = await createCampaign(campaign);
+      console.log("Response", response);
+      openModal();
+      clearForm();
+    } catch (error) {
+      console.error("There was an error creating the campaign!", error);
+    } finally {
+      setIsLoading(false); // Set loading to false when form submission ends
+    }
   };
 
+  const clearForm = () => {
+    setCampaignName("");
+    setCampaignDescription("");
+    setStartDate(null);
+    setEndDate(null);
+    setDigestCampaign(false);
+    setLinkedKeywords("");
+    setDailyDigest("");
+  };
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="p-6">
@@ -56,7 +86,7 @@ const NewCampaign = () => {
             onChange={(e) => setCampaignName(e.target.value)}
             placeholder="e.g. The future is now"
             // className="mt-1 p-2 border rounded w-full"
-            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#247b7b]"
             required
           />
         </div>
@@ -69,7 +99,7 @@ const NewCampaign = () => {
             onChange={(e) => setCampaignDescription(e.target.value)}
             // className="mt-1 p-2 border rounded w-full"
             placeholder="Please add a description to your campaign"
-            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#247b7b]"
             required
           />
         </div>
@@ -121,10 +151,10 @@ const NewCampaign = () => {
             <FaAsterisk size={5} className="inline text-red-500 absolute" />
           </label>
           <textarea
-          value={linkedKeywords}
-          onChange={(e) => setLinkedKeywords(e.target.value)}
+            value={linkedKeywords}
+            onChange={(e) => setLinkedKeywords(e.target.value)}
             placeholder="To add keywords, type your keyword and press enter"
-            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#247b7b]"
             required
           ></textarea>
         </div>
@@ -161,12 +191,36 @@ const NewCampaign = () => {
           </button>
           <button
             type="submit"
-            className="px-12 py-2 bg-[#247b7b] hover:bg-[#247e7e] font-semibold text-white rounded"
+            className="px-12 py-2 bg-[#247b7b] font-semibold text-white rounded hover:bg-[#1b5e5e]"
+            disabled={isLoading}
           >
-            Create Campaign
+            <div className="flex items-center">
+              {isLoading ? <FaSpinner className="animate-spin mr-2" /> : null}
+              {isLoading ? "Creating..." : "Create Campaign"}
+            </div>
           </button>
         </div>
       </form>
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Success Confirmation"
+        className="bg-white p-8 rounded-md shadow-lg mx-auto my-32 max-w-sm text-center"
+        overlayClassName="fixed inset-0 bg-gray-400 bg-opacity-50"
+      >
+        <div className="flex flex-col items-center">
+          <FaCheckCircle size={40} className="text-[#247b7b] my-10" />
+          <h2 className="text-sm text-[#666666] mb-10">
+            Campaign successfully created!
+          </h2>
+          <button
+            onClick={closeModal}
+            className="bg-[#247b7b] text-white text-sm px-4 py-2 rounded hover:bg-[#1b5e5e] mb-5"
+          >
+            Go back to campaign list
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };
