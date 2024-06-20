@@ -38,9 +38,9 @@ const SignIn = () => {
         password: formData.password,
       });
 
-      console.log("Mock login formData:", formData);
-      console.log("Mock login response data:", response.data);
-      console.log("Response:", response);
+      // console.log("Mock login formData:", formData);
+      // console.log("Mock login response data:", response.data);
+      // console.log("Response:", response);
 
       toast.success("Login Successful", {
         position: "top-right",

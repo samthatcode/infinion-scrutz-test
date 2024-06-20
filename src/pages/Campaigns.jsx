@@ -7,10 +7,12 @@ import {
 } from "react-icons/ai";
 import { FiChevronDown } from "react-icons/fi";
 import { IconContext } from "react-icons";
-import { getAllCampaigns } from "../api";
+import { getAllCampaigns, deleteCampaign } from "../api";
 import { FaRegEdit, FaRegEye, FaTrash, FaSpinner } from "react-icons/fa";
 import Search from "../components/Search.jsx";
 import CampaignDetails from "./CampaignDetails.jsx";
+import Modal from "react-modal";
+Modal.setAppElement("#root");
 
 const Campaigns = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,11 +22,18 @@ const Campaigns = () => {
   const itemsPerPage = 10;
   const [selectedCampaignId, setSelectedCampaignId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for deletion modal
+  const [campaignToDelete, setCampaignToDelete] = useState(null); // State to track which campaign to delete
+  const [isDeleted, setIsDeleted] = useState(false);
 
   useEffect(() => {
     const fetchTableData = async () => {
       setIsLoading(true);
       const response = await getAllCampaigns(currentPage, itemsPerPage);
+
+      // console.log('Response Data:', response.data);
+      
       let data = response.data;
 
       if (selectedTab !== "all") {
@@ -55,6 +64,43 @@ const Campaigns = () => {
 
   const handleCloseDetails = () => {
     setSelectedCampaignId(null);
+    setIsEditing(false); // Reset editing mode
+  };
+
+  const handleEditClick = (id) => {
+    setSelectedCampaignId(id);
+    setIsEditing(true); // Enable editing mode
+  };
+
+  const handleViewClick = (id) => {
+    setSelectedCampaignId(id);
+    setIsEditing(false); // Disable editing mode
+  };
+
+  const handleDeleteClick = (id) => {
+    setCampaignToDelete(id);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteCampaign = () => {
+    deleteCampaign(campaignToDelete)
+      .then(() => {
+        setIsDeleted(true);
+        setTableData((prevData) =>
+          prevData.filter((item) => item.id !== campaignToDelete)
+        );
+      })
+      .catch((error) => {
+        console.error("There was an error deleting the campaign!", error);
+      });
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setCampaignToDelete(null);
+    if (isDeleted) {
+      setIsDeleted(false); // Reset the deletion state
+    }
   };
 
   // Calculate start and end indices for pagination info
@@ -68,7 +114,11 @@ const Campaigns = () => {
           <AiOutlineArrowLeft className="font-semibold" />
           <button onClick={() => setSelectedCampaignId(null)}>Back</button>
         </div>
-        <CampaignDetails campaignId={selectedCampaignId} onClose={handleCloseDetails} />
+        <CampaignDetails
+          campaignId={selectedCampaignId}
+          onClose={handleCloseDetails}
+          isEditing={isEditing} // Pass editing mode to CampaignDetails
+        />
       </div>
     );
   }
@@ -179,12 +229,16 @@ const Campaigns = () => {
                   <span className="flex gap-4">
                     <FaRegEye
                       className="cursor-pointer"
-                      onClick={() => {
-                        setSelectedCampaignId(item.id);
-                      }}
+                      onClick={() => handleViewClick(item.id)}
                     />
-                    <FaRegEdit />
-                    <FaTrash />
+                    <FaRegEdit
+                      className="cursor-pointer"
+                      onClick={() => handleEditClick(item.id)}
+                    />
+                    <FaTrash
+                      className="cursor-pointer"
+                      onClick={() => handleDeleteClick(item.id)}
+                    />
                   </span>
                 </td>
               </tr>
@@ -221,6 +275,62 @@ const Campaigns = () => {
           Showing {startIndex} to {endIndex} of {totalItems} results
         </div>
       </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Delete Confirmation"
+        className="bg-white p-8 rounded shadow-lg mx-auto my-32 max-w-md text-center"
+        overlayClassName="fixed inset-0 bg-gray-800 bg-opacity-50"
+      >
+        {!isDeleted ? (
+          <>
+            <div className="my-14">
+              <h2 className="capitalize text-xl mb-10 text-[#000]">
+                stop campaign
+              </h2>
+              <small className="text-base mb-4 text-[#666666]">
+                Are you sure you want to delete MTN campaign?
+              </small>
+              <br />
+              <small className=" text-[#666666]">
+                This action cannot be undone
+              </small>
+            </div>
+            <div className="space-x-4">
+              <button
+                onClick={closeModal}
+                className="bg-white text-[#404040] border border-[#435a6b] px-6 py-2 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteCampaign}
+                className="bg-[#990000] text-white px-4 py-2 rounded"
+              >
+                Delete Campaign
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-col items-center">
+              <h2 className="capitalize text-xl mb-10 text-[#000]">
+                Campaign deleted
+              </h2>
+              <small className="text-sm mb-10 text-[#666666]">
+                MTN campaign has been deleted
+              </small>
+              <button
+                onClick={closeModal}
+                className="bg-[#247b7b] text-white px-6 py-2 rounded text-sm"
+              >
+                Go back to campaign list
+              </button>
+            </div>
+          </>
+        )}
+      </Modal>
     </div>
   );
 };

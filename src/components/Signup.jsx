@@ -44,7 +44,7 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Perform API call or submit data as needed
-    console.log("Form submitted:", formData); 
+    // console.log("Form submitted:", formData); 
 
     // Mocking a successful sign-up with setTimeout
     toast.success("Sign Up Successful", {

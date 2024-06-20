@@ -27,10 +27,10 @@ const Pending = ({ showModal, setShowModal }) => {
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                     <div className="flex items-center flex-col">
                       <AiOutlineExclamationCircle className="text-[#FF9900] text-2xl" />
-                      <h2 className="text-[#FF9900] text-xl font-medium mt-2">Pending</h2>
+                      <h2 className="text-[#FF9900] text-xl font-medium mt-2">Congratulations!</h2>
                     </div>
                     <p className="mt-4 [#1a1619] text-center text-[12px] font-medium">
-                      Your registration is awaiting approval from our partnership team.
+                      Your registration is successful and awaiting approval from our partnership team.
                     </p>
                   </div>
                 </div>

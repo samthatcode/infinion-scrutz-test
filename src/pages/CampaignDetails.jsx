@@ -9,8 +9,10 @@ import {
 import Modal from "react-modal";
 Modal.setAppElement("#root");
 import { FaChevronDown, FaSpinner } from "react-icons/fa";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-const CampaignDetails = ({ campaignId, onClose }) => {
+const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
   const [campaign, setCampaign] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
@@ -18,6 +20,7 @@ const CampaignDetails = ({ campaignId, onClose }) => {
 
   useEffect(() => {
     if (campaignId) {
+      console.log("Fetching campaign details for ID:", campaignId);
       getCampaignById(campaignId)
         .then((response) => {
           const data = response.data;
@@ -39,12 +42,20 @@ const CampaignDetails = ({ campaignId, onClose }) => {
   }, [campaignId]);
 
   const handleEdit = () => {
+    if (!campaign.startDate || !campaign.endDate) {
+      // Handle error state or show a message to the user
+      console.error("Please select both start date and end date.");
+      return;
+    }
     const updatedCampaign = {
       ...campaign,
+      id: campaignId,
       linkedKeywords: campaign.linkedKeywords
         .split(",")
         .map((keyword) => keyword.trim()),
+      digestCampaign: campaign.digestCampaign === "true" ? true : false, // Convert to Boolean
     };
+    console.log("Updating campaign with ID:", campaignId);
     updateCampaign(campaignId, updatedCampaign)
       .then((response) => {
         console.log("Campaign updated successfully:", response.data);
@@ -55,13 +66,19 @@ const CampaignDetails = ({ campaignId, onClose }) => {
   };
 
   const handleDelete = () => {
-    deleteCampaign(campaignId)
-      .then(() => {
-        setIsDeleted(true);
-      })
-      .catch((error) => {
-        console.error("There was an error deleting the campaign!", error);
-      });
+    console.log("Attempting to delete campaign with ID:", campaignId);
+    if (campaignId) {
+      console.log("Deleting campaign with ID:", campaignId);
+      deleteCampaign(campaignId)
+        .then(() => {
+          setIsDeleted(true);
+        })
+        .catch((error) => {
+          console.error("There was an error deleting the campaign!", error);
+        });
+    } else {
+      console.error("campaignId is undefined when attempting to delete");
+    }
   };
 
   const openModal = () => {
@@ -73,6 +90,10 @@ const CampaignDetails = ({ campaignId, onClose }) => {
     if (isDeleted) {
       onClose();
     }
+  };
+
+  const handleDateChange = (date, field) => {
+    setCampaign({ ...campaign, [field]: date.toISOString() }); // Assuming campaign state stores dates as ISO strings
   };
 
   if (!campaign) {
@@ -87,7 +108,7 @@ const CampaignDetails = ({ campaignId, onClose }) => {
     <div className="container mx-auto p-4">
       <div className="flex justify-between">
         <h1 className="text-2xl font-bold mb-4 capitalize text-[#247b7b]">
-          campaign information
+          {isEditing ? "Edit Campaign" : "Campaign Information"}
         </h1>
         <div className="flex items-center border bg-[#edf0f0] p-2 rounded-md text-sm">
           <div className="pr-2 font-semibold">
@@ -106,6 +127,7 @@ const CampaignDetails = ({ campaignId, onClose }) => {
             setCampaign({ ...campaign, campaignName: e.target.value })
           }
           className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={!isEditing}
         />
       </div>
       <div className="mb-4">
@@ -116,41 +138,38 @@ const CampaignDetails = ({ campaignId, onClose }) => {
             setCampaign({ ...campaign, campaignDescription: e.target.value })
           }
           className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={!isEditing}
         />
       </div>
       <div className="mb-4 flex justify-between">
         <div className="mb-4">
           <label className="block text-gray-700">Start Date</label>
-          <input
-            value={campaign.startDate}
-            onChange={(e) =>
-              setCampaign({ ...campaign, startDate: e.target.value })
-            }
+          <DatePicker
+            selected={new Date(campaign.startDate)}
+            onChange={(date) => handleDateChange(date, "startDate")}
             className="w-[24rem] px-4 py-2 border rounded"
+            dateFormat="yyyy-MM-dd"
+            disabled={!isEditing}
           />
+          {!campaign.startDate && (
+            <p className="text-red-500">Start Date is required.</p>
+          )}
         </div>
         <div className="mb-4">
           <label className="block text-gray-700">End Date</label>
-          <input
-            value={campaign.endDate}
-            onChange={(e) =>
-              setCampaign({ ...campaign, endDate: e.target.value })
-            }
+          <DatePicker
+            selected={new Date(campaign.endDate)}
+            onChange={(date) => handleDateChange(date, "endDate")}
             className="w-[24rem] px-4 py-2 border rounded"
+            dateFormat="yyyy-MM-dd"
+            disabled={!isEditing}
           />
+          {!campaign.endDate && (
+            <p className="text-red-500">End Date is required.</p>
+          )}
         </div>
       </div>
-      {/* <div className="mb-4">
-        <label className="block text-gray-700">Digest Campaign</label>
-        <input
-          type="checkbox"
-          checked={campaign.digestCampaign}
-          onChange={(e) =>
-            setCampaign({ ...campaign, digestCampaign: e.target.checked })
-          }
-          className="mt-1 p-2"
-        />
-      </div> */}
+
       <div className="mb-4">
         <label className="block text-gray-700">Linked Keywords</label>
         <textarea
@@ -160,52 +179,77 @@ const CampaignDetails = ({ campaignId, onClose }) => {
             setCampaign({ ...campaign, linkedKeywords: e.target.value })
           }
           className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          disabled={!isEditing}
         ></textarea>
       </div>
+
       <div className="mb-4">
         <label className="block text-gray-700">
           Want to receive daily digest about the campaign?
         </label>
-        <input
-          type="text"
-          value={campaign.dailyDigest}
-          onChange={(e) =>
-            setCampaign({ ...campaign, dailyDigest: e.target.value })
-          }
-          className="mt-1 p-2 border rounded w-full"
-        />
+        <div className="relative">
+          <select
+            value={campaign.digestCampaign ? "Yes" : "No"}
+            onChange={(e) =>
+              setCampaign({
+                ...campaign,
+                digestCampaign: e.target.value === "Yes",
+              })
+            }
+            className="px-4 py-2 border rounded appearance-none cursor-pointer bg-white text-[#666666] w-full"
+            style={{ paddingRight: "30px", minWidth: "150px" }}
+            disabled={!isEditing} // Disable the dropdown when not in editing mode
+          >
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+          <FaChevronDown className="absolute right-3 top-3 text-gray-500 cursor-pointer" />
+        </div>
       </div>
+
       <div className="mb-14">
         <label className="block text-sm font-medium mb-1 text-[#666666]">
           Kindly select how often you want to receive daily digest
         </label>
         <div className="relative">
           <select
+            value={campaign.dailyDigest}
+            onChange={(e) =>
+              setCampaign({ ...campaign, dailyDigest: e.target.value })
+            }
             className="px-4 py-2 border rounded appearance-none cursor-pointer bg-white text-[#666666] w-full"
             style={{ paddingRight: "30px", minWidth: "150px" }}
+            disabled={!isEditing}
           >
             <option value="monthly">Monthly</option>
             <option value="weekly">Weekly</option>
             <option value="daily">Daily</option>
             <option value="hourly">Hourly</option>
           </select>
-          <FaChevronDown className="absolute  right-3 top-3 text-gray-500 cursor-pointer" />
+          <FaChevronDown className="absolute right-3 top-3 text-gray-500 cursor-pointer" />
         </div>
       </div>
-      <div className="flex gap-6">
-        <button
-          onClick={openModal}
-          className="bg-[#990000] text-white px-4 py-2 rounded"
-        >
-          Stop Campaign
-        </button>
-        <button
-          onClick={handleEdit}
-          className="bg-[#fffffa] text-[#76acaa] border border-[#76acaa] px-4 py-2 rounded mr-2"
-        >
-          Edit Information
-        </button>
-      </div>
+
+      {isEditing ? (
+        <div className="flex gap-6">
+          <button
+            onClick={handleEdit}
+            className="bg-[#fffffa] text-[#76acaa] border border-[#76acaa] px-4 py-2 rounded mr-2"
+          >
+            Save Changes
+          </button>
+        </div>
+      ) : (
+        <div className="flex gap-6">
+          <button
+            onClick={openModal}
+            className="bg-[#990000] text-white px-4 py-2 rounded"
+          >
+            Stop Campaign
+          </button>
+        </div>
+      )}
+
       <Modal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
