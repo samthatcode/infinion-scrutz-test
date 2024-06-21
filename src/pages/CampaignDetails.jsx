@@ -8,7 +8,7 @@ import {
 } from "../api";
 import Modal from "react-modal";
 Modal.setAppElement("#root");
-import { FaChevronDown, FaSpinner } from "react-icons/fa";
+import { FaChevronDown, FaSpinner, FaEdit, FaTimes } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -17,10 +17,12 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const [campaignStatus, setCampaignStatus] = useState("");
+  const [isEditingStatus, setIsEditingStatus] = useState(false);
+  const [newStatus, setNewStatus] = useState("");
 
   useEffect(() => {
     if (campaignId) {
-      console.log("Fetching campaign details for ID:", campaignId);
+      // console.log("Fetching campaign details for ID:", campaignId);
       getCampaignById(campaignId)
         .then((response) => {
           const data = response.data;
@@ -55,10 +57,10 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
         .map((keyword) => keyword.trim()),
       digestCampaign: campaign.digestCampaign === "true" ? true : false, // Convert to Boolean
     };
-    console.log("Updating campaign with ID:", campaignId);
+    // console.log("Updating campaign with ID:", campaignId);
     updateCampaign(campaignId, updatedCampaign)
-      .then((response) => {
-        console.log("Campaign updated successfully:", response.data);
+      .then(() => {
+        // console.log("Campaign updated successfully:", response.data);
       })
       .catch((error) => {
         console.error("There was an error updating the campaign!", error);
@@ -66,9 +68,9 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
   };
 
   const handleDelete = () => {
-    console.log("Attempting to delete campaign with ID:", campaignId);
+    // console.log("Attempting to delete campaign with ID:", campaignId);
     if (campaignId) {
-      console.log("Deleting campaign with ID:", campaignId);
+      // console.log("Deleting campaign with ID:", campaignId);
       deleteCampaign(campaignId)
         .then(() => {
           setIsDeleted(true);
@@ -79,6 +81,26 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
     } else {
       console.error("campaignId is undefined when attempting to delete");
     }
+  };
+
+  const handleStatusChange = () => {
+    const statusPayload = {
+      id: campaignId,
+      campaignStatus: newStatus === "active",
+    };
+    // console.log("Updating status for campaign ID:", campaignId);
+    // console.log("Status payload:", statusPayload);
+    updateCampaignStatus(campaignId, statusPayload)
+      .then(() => {
+        setCampaignStatus(newStatus);
+        setIsEditingStatus(false);
+      })
+      .catch((error) => {
+        console.error(
+          "There was an error updating the campaign status!",
+          error
+        );
+      });
   };
 
   const openModal = () => {
@@ -94,6 +116,20 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
 
   const handleDateChange = (date, field) => {
     setCampaign({ ...campaign, [field]: date.toISOString() }); // Assuming campaign state stores dates as ISO strings
+  };
+
+  const removeKeyword = (index) => {
+    const keywords = campaign.linkedKeywords
+      .split(",")
+      .map((keyword) => keyword.trim());
+    keywords.splice(index, 1);
+    setCampaign({ ...campaign, linkedKeywords: keywords.join(", ") });
+  };
+
+  const handleTextareaChange = (e) => {
+    if (isEditing) {
+      setCampaign({ ...campaign, linkedKeywords: e.target.value });
+    }
   };
 
   if (!campaign) {
@@ -115,9 +151,42 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
             <span>Campaign Status</span>
           </div>
           <span>|</span>
-          <span className="pl-2 capitalize ">{campaignStatus}</span>
+          <span
+            className={`pl-2 capitalize flex items-center ${
+              campaignStatus.toLowerCase() === "active"
+                ? "bg-green-100 text-green-700 text-xs font-bold inline-block py-1 px-2 last:mr-0 mr-1 text-[14px]"
+                : "bg-red-100 text-red-700 text-xs font-bold inline-block py-1 px-2 last:mr-0 mr-1 text-[14px]"
+            }`}
+          >
+            {campaignStatus}
+            {isEditing && (
+              <FaEdit
+                className="ml-2 cursor-pointer"
+                onClick={() => setIsEditingStatus(true)}
+              />
+            )}
+          </span>
         </div>
       </div>
+      {isEditingStatus && (
+        <div className="flex items-center mb-4">
+          <select
+            value={newStatus}
+            onChange={(e) => setNewStatus(e.target.value)}
+            className="px-4 py-2 border rounded cursor-pointer bg-white text-[#666666] mr-2"
+          >
+            <option value="">Select Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <button
+            onClick={handleStatusChange}
+            className="bg-[#247b7b] text-white px-4 py-2 rounded"
+          >
+            Update Status
+          </button>
+        </div>
+      )}
       <div className="mb-4">
         <label className="block text-gray-700">Campaign Name</label>
         <input
@@ -126,7 +195,7 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
           onChange={(e) =>
             setCampaign({ ...campaign, campaignName: e.target.value })
           }
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#247b7b]"
           disabled={!isEditing}
         />
       </div>
@@ -137,7 +206,7 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
           onChange={(e) =>
             setCampaign({ ...campaign, campaignDescription: e.target.value })
           }
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#247b7b]"
           disabled={!isEditing}
         />
       </div>
@@ -172,15 +241,33 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
 
       <div className="mb-4">
         <label className="block text-gray-700">Linked Keywords</label>
-        <textarea
-          type="text"
-          value={campaign.linkedKeywords}
-          onChange={(e) =>
-            setCampaign({ ...campaign, linkedKeywords: e.target.value })
-          }
-          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          disabled={!isEditing}
-        ></textarea>
+        <div className="flex flex-wrap gap-2">
+          <textarea
+            value={campaign.linkedKeywords}
+            onChange={handleTextareaChange}
+            className={`mt-2 w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#247b7b] ${
+              !isEditing && "bg-gray-100"
+            }`}
+            placeholder={isEditing ? "Enter keywords separated by commas" : ""}
+            readOnly={!isEditing}
+          />
+          {!isEditing && (
+            <div className="flex flex-wrap gap-2 mt-2" >
+              {campaign.linkedKeywords.split(",").map((keyword, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-200 text-gray-700 px-3 py-1 rounded flex items-center"
+                >
+                  <span className="mr-2">{keyword.trim()}</span>
+                  <FaTimes
+                    className="cursor-pointer"
+                    onClick={() => removeKeyword(index)}                 
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="mb-4">
@@ -234,9 +321,9 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
         <div className="flex gap-6">
           <button
             onClick={handleEdit}
-            className="bg-[#fffffa] text-[#76acaa] border border-[#76acaa] px-4 py-2 rounded mr-2"
+            className="bg-[#fffffa] text-[#247b7b] border border-[#76acaa] px-4 py-2 rounded mr-2"
           >
-            Save Changes
+            Update Campaign
           </button>
         </div>
       ) : (

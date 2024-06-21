@@ -25,7 +25,7 @@ const Overview = ({ onNewCampaignClick }) => {
   };
 
   return (
-    <div className="p-4">
+    <div className="container mx-auto p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="font-bold capitalize text-xl text-[#247b7b]">
           overview

@@ -25,10 +25,13 @@ export const getAllCampaigns = async (page, itemsPerPage) => {
 
 export const getCampaignById = (id) => axios.get(`${API_BASE_URL}/api/Campaign/${id}`);
 
-
 export const updateCampaign = (id, campaign) => axios.put(`${API_BASE_URL}/api/Campaign/${id}`, campaign);
 
 export const deleteCampaign = (id) => axios.delete(`${API_BASE_URL}/api/Campaign/${id}`);
 
-export const updateCampaignStatus = (id, status) => axios.put(`${API_BASE_URL}/api/CampaignStatus/${id}`, { campaignStatus: status });
+export const updateCampaignStatus = (id, statusPayload) => {
+  return axios.put(`${API_BASE_URL}/api/CampaignStatus/${id}`, statusPayload);
+};
+
+
 

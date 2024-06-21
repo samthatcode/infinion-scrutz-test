@@ -33,7 +33,7 @@ const Campaigns = () => {
       const response = await getAllCampaigns(currentPage, itemsPerPage);
 
       // console.log('Response Data:', response.data);
-      
+
       let data = response.data;
 
       if (selectedTab !== "all") {
@@ -110,9 +110,12 @@ const Campaigns = () => {
   if (selectedCampaignId !== null) {
     return (
       <div>
-        <div className="flex items-center gap-1">
-          <AiOutlineArrowLeft className="font-semibold" />
-          <button onClick={() => setSelectedCampaignId(null)}>Back</button>
+        <div >
+          <button className="flex items-center gap-1 font-semibold text-lg" onClick={() => setSelectedCampaignId(null)}>
+            {" "}
+            <AiOutlineArrowLeft className="font-semibold" />
+            Back
+          </button>
         </div>
         <CampaignDetails
           campaignId={selectedCampaignId}
@@ -124,7 +127,7 @@ const Campaigns = () => {
   }
 
   return (
-    <div className="p-4">
+    <div className="container mx-auto p-4">
       <div className="font-bold capitalize text-xl text-[#247b7b] mb-4">
         all campaigns
       </div>

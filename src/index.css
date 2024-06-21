@@ -34,3 +34,43 @@ textarea {
   .custom-classname {
     color: #ab199f;
   }
+
+/* sidebar and main content styles */
+.sidebar-container {
+  height: 100vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+  width: 250px; /* Adjust the width as needed */
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+
+/* Add these styles to your CSS file */
+.keyword-tab {
+  display: inline-flex;
+  align-items: center;
+  background-color: #e2e8f0;
+  color: #2d3748;
+  padding: 0.5rem;
+  margin: 0.25rem;
+  border-radius: 0.25rem;
+  position: relative;
+}
+
+.keyword-tab .close-btn {
+  background: none;
+  border: none;
+  color: #c53030;
+  font-weight: bold;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.25rem;
+}

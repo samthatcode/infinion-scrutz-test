@@ -1,10 +1,17 @@
 import {
   FaBars,
   FaChevronDown,
-  FaFreeCodeCamp,
   FaRegBell,
   FaRegQuestionCircle,
 } from "react-icons/fa";
+import { IoSettingsOutline } from "react-icons/io5";
+import { MdOutlineCampaign } from "react-icons/md";
+import { HiOutlineLightBulb } from "react-icons/hi";
+import { FaWifi } from "react-icons/fa6";
+import { PiFirstAidKit } from "react-icons/pi";
+import { LuUsers2 } from "react-icons/lu";
+import { TiMessages } from "react-icons/ti";
+import { GiSpeedometer } from "react-icons/gi";
 import { Sidebar, Menu, MenuItem, useProSidebar } from "react-pro-sidebar";
 import {
   Overview,
@@ -58,17 +65,21 @@ const Dashboard = () => {
   };
 
   return (
-    <div style={{ height: "100vh", display: "flex" }}>
+    <div style={{ display: "flex" }}>
       <Sidebar
-        style={{
-          height: "100vh",
-          backgroundColor: "#f0f4f4",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
+      className="sidebar-container"
+      style={{
+        backgroundColor: "#f0f4f4",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+      }}
       >
         <Menu>
+          <div className="flex items-center">
+          <TiMessages />
+          <h2 className="capitalize text-2xl text-[#247b7b]">scrutz</h2>
+          </div>
           <MenuItem
             icon={<FaBars size={25} />}
             onClick={() => {
@@ -76,7 +87,6 @@ const Dashboard = () => {
             }}
             style={{ textAlign: "center" }}
           >
-            <h2 className="capitalize">scrutz</h2>
           </MenuItem>
           <div className="my-11 mx-2">
             <button onClick={() => setActiveComponent("new-campaign")}>
@@ -84,7 +94,7 @@ const Dashboard = () => {
             </button>
           </div>
           <MenuItem
-            icon={<FaFreeCodeCamp size={25} />}
+            icon={<GiSpeedometer size={25} />}
             onClick={() => setActiveComponent("overview")}
             style={{
               backgroundColor:
@@ -95,7 +105,7 @@ const Dashboard = () => {
             Overview
           </MenuItem>
           <MenuItem
-            icon={<FaFreeCodeCamp size={25} />}
+            icon={<MdOutlineCampaign size={25} />}
             onClick={() => setActiveComponent("campaign")}
             style={{
               backgroundColor:
@@ -107,7 +117,7 @@ const Dashboard = () => {
             Campaign
           </MenuItem>
           <MenuItem
-            icon={<FaFreeCodeCamp size={25} />}
+            icon={<HiOutlineLightBulb size={25} />}
             onClick={() => setActiveComponent("market-intelligence")}
             style={{
               backgroundColor:
@@ -123,7 +133,7 @@ const Dashboard = () => {
             Market Intelligence
           </MenuItem>
           <MenuItem
-            icon={<FaFreeCodeCamp size={25} />}
+            icon={<FaWifi size={25} />}
             onClick={() => setActiveComponent("feeds")}
             style={{
               backgroundColor:
@@ -134,7 +144,7 @@ const Dashboard = () => {
             Feeds
           </MenuItem>
           <MenuItem
-            icon={<FaFreeCodeCamp size={25} />}
+            icon={<PiFirstAidKit size={25} />}
             onClick={() => setActiveComponent("brand-health")}
             style={{
               backgroundColor:
@@ -145,7 +155,7 @@ const Dashboard = () => {
             Brand Health
           </MenuItem>
           <MenuItem
-            icon={<FaFreeCodeCamp size={25} />}
+            icon={<LuUsers2 size={25} />}
             onClick={() => setActiveComponent("influencers")}
             style={{
               backgroundColor:
@@ -156,7 +166,7 @@ const Dashboard = () => {
             Influencers
           </MenuItem>
           <MenuItem
-            icon={<FaFreeCodeCamp size={25} />}
+            icon={<MdOutlineCampaign size={25} />}
             onClick={() => setActiveComponent("competitor-insights")}
             style={{
               backgroundColor:
@@ -171,8 +181,8 @@ const Dashboard = () => {
           >
             Competitor Insights
           </MenuItem>
-          <MenuItem
-            icon={<FaFreeCodeCamp size={25} />}
+          <MenuItem   
+            icon={<IoSettingsOutline size={25} />}
             onClick={() => setActiveComponent("account-settings")}
             style={{
               backgroundColor:
@@ -201,7 +211,7 @@ const Dashboard = () => {
       </Sidebar>
 
       {/* Render the active component */}
-      <main style={{ flex: 1, padding: "16px" }}>
+      <main className="main-content" style={{ padding: "16px" }}>
         <header
           style={{
             display: "flex",
