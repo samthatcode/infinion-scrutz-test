@@ -252,7 +252,7 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
             readOnly={!isEditing}
           />
           {!isEditing && (
-            <div className="flex flex-wrap gap-2 mt-2" >
+            <div className="flex flex-wrap gap-2 mt-2">
               {campaign.linkedKeywords.split(",").map((keyword, index) => (
                 <div
                   key={index}
@@ -261,7 +261,7 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
                   <span className="mr-2">{keyword.trim()}</span>
                   <FaTimes
                     className="cursor-pointer"
-                    onClick={() => removeKeyword(index)}                 
+                    onClick={() => removeKeyword(index)}
                   />
                 </div>
               ))}
@@ -347,7 +347,13 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
         {!isDeleted ? (
           <>
             <div className="my-14">
-              <h2 className="capitalize text-xl mb-10 text-[#000]">
+              <h2
+                className="capitalize text-xl mb-10 text-[#000]"
+                style={{
+                  borderBottom: "1px solid #ccc",
+                  paddingBottom: "10px",
+                }}
+              >
                 stop campaign
               </h2>
               <small className="text-base mb-4 text-[#666666]">
@@ -376,7 +382,13 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
         ) : (
           <>
             <div className="flex flex-col items-center">
-              <h2 className="capitalize text-xl mb-10 text-[#000]">
+              <h2
+                className="capitalize text-xl mb-10 text-[#000]"
+                style={{
+                  borderBottom: "1px solid #ccc",
+                  paddingBottom: "10px",
+                }}
+              >
                 Campaign deleted
               </h2>
               <small className="text-sm mb-10 text-[#666666]">

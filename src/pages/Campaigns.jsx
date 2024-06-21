@@ -110,8 +110,11 @@ const Campaigns = () => {
   if (selectedCampaignId !== null) {
     return (
       <div>
-        <div >
-          <button className="flex items-center gap-1 font-semibold text-lg" onClick={() => setSelectedCampaignId(null)}>
+        <div>
+          <button
+            className="flex items-center gap-1 font-semibold text-lg"
+            onClick={() => setSelectedCampaignId(null)}
+          >
             {" "}
             <AiOutlineArrowLeft className="font-semibold" />
             Back
@@ -289,9 +292,16 @@ const Campaigns = () => {
         {!isDeleted ? (
           <>
             <div className="my-14">
-              <h2 className="capitalize text-xl mb-10 text-[#000]">
+              <h2
+                className="capitalize text-xl mb-10 text-[#000]"
+                style={{
+                  borderBottom: "1px solid #ccc",
+                  paddingBottom: "10px",
+                }}
+              >
                 stop campaign
               </h2>
+
               <small className="text-base mb-4 text-[#666666]">
                 Are you sure you want to delete MTN campaign?
               </small>
@@ -318,7 +328,13 @@ const Campaigns = () => {
         ) : (
           <>
             <div className="flex flex-col items-center">
-              <h2 className="capitalize text-xl mb-10 text-[#000]">
+              <h2
+                className="capitalize text-xl mb-10 text-[#000]"
+                style={{
+                  borderBottom: "1px solid #ccc",
+                  paddingBottom: "10px",
+                }}
+              >
                 Campaign deleted
               </h2>
               <small className="text-sm mb-10 text-[#666666]">

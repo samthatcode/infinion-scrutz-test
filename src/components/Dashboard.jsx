@@ -1,5 +1,4 @@
 import {
-  FaBars,
   FaChevronDown,
   FaRegBell,
   FaRegQuestionCircle,
@@ -67,26 +66,27 @@ const Dashboard = () => {
   return (
     <div style={{ display: "flex" }}>
       <Sidebar
-      className="sidebar-container"
-      style={{
-        backgroundColor: "#f0f4f4",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
+        className="sidebar-container"
+        style={{
+          backgroundColor: "#f0f4f4",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
       >
         <Menu>
-          <div className="flex items-center">
-          <TiMessages />
-          <h2 className="capitalize text-2xl text-[#247b7b]">scrutz</h2>
-          </div>
           <MenuItem
-            icon={<FaBars size={25} />}
+            icon={""}
             onClick={() => {
               collapseSidebar();
             }}
-            style={{ textAlign: "center" }}
           >
+            <div className="flex items-center gap-2 ml-4">
+              <TiMessages size={35} className="text-[#247b7b] shadow-sm" />
+              <h2 className="capitalize font-bold text-4xl text-[#247b7b] shadow-sm">
+                sc<span className="text-[#343e7b]">rutz</span>
+              </h2>
+            </div>
           </MenuItem>
           <div className="my-11 mx-2">
             <button onClick={() => setActiveComponent("new-campaign")}>
@@ -181,7 +181,7 @@ const Dashboard = () => {
           >
             Competitor Insights
           </MenuItem>
-          <MenuItem   
+          <MenuItem
             icon={<IoSettingsOutline size={25} />}
             onClick={() => setActiveComponent("account-settings")}
             style={{
