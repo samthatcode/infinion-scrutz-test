@@ -26,28 +26,46 @@ const Campaigns = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State for deletion modal
   const [campaignToDelete, setCampaignToDelete] = useState(null); // State to track which campaign to delete
   const [isDeleted, setIsDeleted] = useState(false);
+  const [totalActiveCount, setTotalActiveCount] = useState(0);
+  const [totalInactiveCount, setTotalInactiveCount] = useState(0);
 
   useEffect(() => {
     const fetchTableData = async () => {
       setIsLoading(true);
       const response = await getAllCampaigns(currentPage, itemsPerPage);
 
-      // console.log('Response Data:', response.data);
-
       let data = response.data;
+      setTotalItems(response.totalItems);
 
+      // Initialize counts
+      let totalActiveCount = 0;
+      let totalInactiveCount = 0;
+
+      // Count active and inactive campaigns
+      data.forEach((item) => {
+        if (item.campaignStatus.toLowerCase() === "active") {
+          totalActiveCount++;
+        } else if (item.campaignStatus.toLowerCase() === "inactive") {
+          totalInactiveCount++;
+        }
+      });
+
+      // Update the state with the calculated counts
+      setTotalActiveCount(totalActiveCount);
+      setTotalInactiveCount(totalInactiveCount);
+
+      // Filter data based on selectedTab
       if (selectedTab !== "all") {
         const status =
-          selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1); // Correctly map tab to status
+          selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1);
         data = data.filter(
           (item) =>
-            item.campaignStatus.trim().toLowerCase() ===
-            status.trim().toLowerCase()
+            item.campaignStatus.trim().toLowerCase() === status.toLowerCase()
         );
       }
 
+      // Update tableData with potentially filtered data
       setTableData(data);
-      setTotalItems(response.totalItems);
       setIsLoading(false);
     };
 
@@ -141,11 +159,11 @@ const Campaigns = () => {
             onClick={() => handleTabChange("all")}
             className={`px-4 py-2 ${
               selectedTab === "all"
-                ? "bg-white text-[#247b7b]  border border-[#247b7b]"
+                ? "bg-white text-[#247b7b] border border-[#247b7b]"
                 : "bg-white text-gray-700 border border-gray-300"
             } rounded-md`}
           >
-            All (90)
+            All ({totalItems})
           </button>
           <button
             onClick={() => handleTabChange("inactive")}
@@ -155,7 +173,7 @@ const Campaigns = () => {
                 : "bg-white text-gray-700 border border-gray-300"
             } rounded-md`}
           >
-            Inactive (90)
+            Inactive ({totalInactiveCount}){" "}
           </button>
           <button
             onClick={() => handleTabChange("active")}
@@ -165,7 +183,7 @@ const Campaigns = () => {
                 : "bg-white text-gray-700 border border-gray-300"
             } rounded-md`}
           >
-            Active (90)
+            Active ({totalActiveCount})
           </button>
         </div>
 
