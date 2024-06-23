@@ -9,7 +9,6 @@ import { HiOutlineLightBulb } from "react-icons/hi";
 import { FaWifi } from "react-icons/fa6";
 import { PiFirstAidKit } from "react-icons/pi";
 import { LuUsers2 } from "react-icons/lu";
-import { TiMessages } from "react-icons/ti";
 import { GiSpeedometer } from "react-icons/gi";
 import { Sidebar, Menu, MenuItem, useProSidebar } from "react-pro-sidebar";
 import {
@@ -27,6 +26,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import NewCampButton from "./NewCampButton";
 import Search from "./Search";
+import arcticons_google_messages from "../assets/arcticons_google_messages.png";
 
 const Dashboard = () => {
   const { collapseSidebar } = useProSidebar();
@@ -81,10 +81,10 @@ const Dashboard = () => {
               collapseSidebar();
             }}
           >
-            <div className="flex items-center gap-2 ml-4">
-              <TiMessages size={35} className="text-[#247b7b] shadow-sm" />
-              <h2 className="capitalize font-bold text-4xl text-[#247b7b] shadow-sm">
-                sc<span className="text-[#343e7b]">rutz</span>
+            <div className="flex items-center gap-2">
+              <img src={arcticons_google_messages} alt="Scrutz" />
+              <h2 className="capitalize font-bold text-4xl text-[#247b7b]">
+                sc<span className="text-[#3B247B]">rutz</span>
               </h2>
             </div>
           </MenuItem>

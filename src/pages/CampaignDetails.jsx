@@ -8,9 +8,11 @@ import {
 } from "../api";
 import Modal from "react-modal";
 Modal.setAppElement("#root");
-import { FaChevronDown, FaSpinner, FaEdit, FaTimes } from "react-icons/fa";
+import { FaChevronDown, FaSpinner, FaEdit } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { WithContext as ReactTags, SEPARATORS  } from 'react-tag-input';
+
 
 const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
   const [campaign, setCampaign] = useState(null);
@@ -19,6 +21,7 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
   const [campaignStatus, setCampaignStatus] = useState("");
   const [isEditingStatus, setIsEditingStatus] = useState(false);
   const [newStatus, setNewStatus] = useState("");
+  const [keywords, setKeywords] = useState([]);
 
   useEffect(() => {
     if (campaignId) {
@@ -118,18 +121,19 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
     setCampaign({ ...campaign, [field]: date.toISOString() }); // Assuming campaign state stores dates as ISO strings
   };
 
-  const removeKeyword = (index) => {
-    const keywords = campaign.linkedKeywords
-      .split(",")
-      .map((keyword) => keyword.trim());
-    keywords.splice(index, 1);
-    setCampaign({ ...campaign, linkedKeywords: keywords.join(", ") });
+  const handleDeleteKeyword = (i) => {
+    setKeywords(keywords.filter((_, index) => index !== i));
   };
 
-  const handleTextareaChange = (e) => {
-    if (isEditing) {
-      setCampaign({ ...campaign, linkedKeywords: e.target.value });
-    }
+  const handleAddition = (keyword) => {
+    setKeywords([...keywords, keyword]);
+  };
+
+  const handleDrag = (keyword, currPos, newPos) => {
+    const newKeywords = [...keywords];
+    newKeywords.splice(currPos, 1);
+    newKeywords.splice(newPos, 0, keyword);
+    setKeywords(newKeywords);
   };
 
   if (!campaign) {
@@ -242,28 +246,33 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
       <div className="mb-4">
         <label className="block text-gray-700">Linked Keywords</label>
         <div className="flex flex-wrap gap-2">
-          <textarea
-            value={campaign.linkedKeywords}
-            onChange={handleTextareaChange}
-            className={`mt-2 w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#247b7b] ${
-              !isEditing && "bg-gray-100"
-            }`}
-            placeholder={isEditing ? "Enter keywords separated by commas" : ""}
-            readOnly={!isEditing}
-          />
-          {!isEditing && (
-            <div className="flex flex-wrap gap-2 mt-2">
-              {campaign.linkedKeywords.split(",").map((keyword, index) => (
-                <div
+          {isEditing ? (
+            <ReactTags
+              tags={keywords}
+              handleDelete={handleDeleteKeyword}
+              handleAddition={handleAddition}
+              handleDrag={handleDrag}
+              separators={[SEPARATORS.ENTER, SEPARATORS.COMMA]}
+              inputFieldPosition="top"
+              placeholder="Add new keyword"
+              classNames={{
+                tags: "tagsClass",
+                tagInput: "tagInputClass",
+                tagInputField: "tagInputFieldClass",
+                selected: "selectedClass",
+                tag: "tagClass",
+                remove: "removeClass",
+              }}
+            />
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {keywords.map((keyword, index) => (
+                <span
                   key={index}
-                  className="bg-gray-200 text-gray-700 px-3 py-1 rounded flex items-center"
+                  className="bg-[#E2F3F3] text-[#247b7b] text-xs font-semibold inline-block py-1 px-2 uppercase rounded last:mr-0 mr-1"
                 >
-                  <span className="mr-2">{keyword.trim()}</span>
-                  <FaTimes
-                    className="cursor-pointer"
-                    onClick={() => removeKeyword(index)}
-                  />
-                </div>
+                  {keyword}
+                </span>
               ))}
             </div>
           )}

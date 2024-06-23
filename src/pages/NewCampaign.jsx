@@ -10,6 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import Toggle from "react-toggle";
 import "react-toggle/style.css";
 import { createCampaign } from "../api";
+import { WithContext as ReactTags, SEPARATORS  } from 'react-tag-input';
 import Modal from "react-modal";
 Modal.setAppElement("#root");
 
@@ -19,7 +20,7 @@ const NewCampaign = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [digestCampaign, setDigestCampaign] = useState(false);
-  const [linkedKeywords, setLinkedKeywords] = useState("");
+  const [linkedKeywords, setLinkedKeywords] = useState([]);
   const [dailyDigest, setDailyDigest] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -69,6 +70,22 @@ const NewCampaign = () => {
     setIsModalOpen(false);
   };
 
+  const handleDelete = i => {
+    setLinkedKeywords(linkedKeywords.filter((tag, index) => index !== i));
+  };
+
+  const handleAddition = tag => {
+    setLinkedKeywords([...linkedKeywords, tag]);
+  };
+
+  const handleDrag = (tag, currPos, newPos) => {
+    const newTags = linkedKeywords.slice();
+    newTags.splice(currPos, 1);
+    newTags.splice(newPos, 0, tag);
+    setLinkedKeywords(newTags);
+  };
+  
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-7 text-[#247b7b]">
@@ -76,7 +93,7 @@ const NewCampaign = () => {
       </h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-1 text-[#666666]">
+          <label className="block text-sm font-medium mb-1 text-[#666666] relative">
             Campaign Name{" "}
             <FaAsterisk size={5} className="inline text-red-500 absolute" />
           </label>
@@ -104,9 +121,9 @@ const NewCampaign = () => {
           />
         </div>
         {/* Start Date and End Date */}
-        <div className="mb-4 flex justify-between">
+        <div className="mb-4 flex justify-between gap-4">
           <div className="">
-            <label className="block text-sm font-medium mb-1 text-[#666666]">
+            <label className="block text-sm font-medium mb-1 text-[#666666] relative">
               Start Date{" "}
               <FaAsterisk size={5} className="inline text-red-500 absolute" />
             </label>
@@ -119,7 +136,7 @@ const NewCampaign = () => {
             />
           </div>
           <div className="">
-            <label className="block text-sm font-medium mb-1 text-[#666666]">
+            <label className="block text-sm font-medium mb-1 text-[#666666] relative">
               End Date{" "}
               <FaAsterisk size={5} className="inline text-red-500 absolute" />
             </label>
@@ -143,43 +160,54 @@ const NewCampaign = () => {
             icons={false}
           />
         </div>
+        {digestCampaign && (
+          <>
+            {/* Linked Keywords */}
+            <div className="mb-7">
+              <label className="block text-sm font-medium mb-1 text-[#666666] relative">
+                Linked Keywords{" "}
+                <FaAsterisk size={5} className="inline text-red-500 absolute" />
+              </label>
+              <ReactTags
+                tags={linkedKeywords}
+                separators={[SEPARATORS.ENTER, SEPARATORS.COMMA]}
+                handleDelete={handleDelete}
+                handleAddition={handleAddition}
+                handleDrag={handleDrag}
+                inputFieldPosition="top"
+                autocomplete
+                classNames={{
+                  tag: 'custom-tag',
+                  tagInput: 'custom-tagInput',
+                  tagInputField: 'custom-tagInputField',
+                  remove: 'custom-remove'
+                }}
+              />
+            </div>
 
-        {/* Linked Keywords */}
-        <div className="mb-7">
-          <label className="block text-sm font-medium mb-1 text-[#666666]">
-            Linked Keywords{" "}
-            <FaAsterisk size={5} className="inline text-red-500 absolute" />
-          </label>
-          <textarea
-            value={linkedKeywords}
-            onChange={(e) => setLinkedKeywords(e.target.value)}
-            placeholder="To add keywords, type your keyword and press enter"
-            className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#247b7b]"
-            required
-          ></textarea>
-        </div>
-
-        {/* Frequency Dropdown */}
-        <div className="mb-14">
-          <label className="block text-sm font-medium mb-1 text-[#666666]">
-            Kindly select how often you want to receive daily digest
-          </label>
-          <div className="relative">
-            <select
-              className="px-4 py-2 border rounded appearance-none w-auto cursor-pointer bg-white text-[#666666]"
-              style={{ paddingRight: "30px", minWidth: "150px" }}
-              value={dailyDigest}
-              onChange={(e) => setDailyDigest(e.target.value)}
-            >
-              <option>Select</option>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="hourly">Hourly</option>
-              <option value="monthly">Monthly</option>
-            </select>
-            <FaChevronDown className="absolute top-3 left-[7rem] text-gray-500 cursor-pointer" />
-          </div>
-        </div>
+            {/* Frequency Dropdown */}
+            <div className="mb-14">
+              <label className="block text-sm font-medium mb-1 text-[#666666]">
+                Kindly select how often you want to receive daily digest
+              </label>
+              <div className="relative">
+                <select
+                  className="px-4 py-2 border rounded appearance-none w-auto cursor-pointer bg-white text-[#666666]"
+                  style={{ paddingRight: "30px", minWidth: "150px" }}
+                  value={dailyDigest}
+                  onChange={(e) => setDailyDigest(e.target.value)}
+                >
+                  <option>Select</option>
+                  <option value="daily">Daily</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="hourly">Hourly</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+                <FaChevronDown className="absolute top-3 left-[7rem] text-gray-500 cursor-pointer" />
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Buttons */}
         <div className="flex space-x-4">
