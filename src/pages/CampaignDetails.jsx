@@ -177,7 +177,7 @@ const CampaignDetails = ({ campaignId, onClose, isEditing }) => {
           <select
             value={newStatus}
             onChange={(e) => setNewStatus(e.target.value)}
-            className="px-4 py-2 border rounded cursor-pointer bg-white text-[#666666] mr-2"
+            className="px-4 py-2 border rounded-sm cursor-pointer bg-white text-[#666666] mr-2"
           >
             <option value="">Select Status</option>
             <option value="active">Active</option>
