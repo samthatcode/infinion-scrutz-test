@@ -1,8 +1,4 @@
-import {
-  FaChevronDown,
-  FaRegBell,
-  FaRegQuestionCircle,
-} from "react-icons/fa";
+import { FaChevronDown, FaRegBell, FaRegQuestionCircle } from "react-icons/fa";
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineCampaign } from "react-icons/md";
 import { HiOutlineLightBulb } from "react-icons/hi";
@@ -22,7 +18,7 @@ import {
   Influencers,
   CompetitorInsights,
 } from "../pages";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import NewCampButton from "./NewCampButton";
 import Search from "./Search";
@@ -32,6 +28,26 @@ const Dashboard = () => {
   const { collapseSidebar } = useProSidebar();
   const [activeComponent, setActiveComponent] = useState("overview");
   const [showLinks, setShowLinks] = useState(false);
+
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const useScrollPosition = () => {
+      const currentScrollPos = window.scrollY;
+      const visible = prevScrollPos > currentScrollPos;
+      setVisible(visible);
+      setPrevScrollPos(currentScrollPos);
+    };
+
+    // Set up event listener for window resize and scroll Position
+    window.addEventListener("scroll", useScrollPosition);
+
+    return () => {
+      // Clean up the event listener
+      window.removeEventListener("scroll", useScrollPosition);
+    };
+  }, [prevScrollPos]);
 
   // Function to render the active component
   const renderComponent = () => {
@@ -218,7 +234,9 @@ const Dashboard = () => {
             justifyContent: "space-between",
             marginBottom: "16px",
           }}
-          className="mx-10"
+          className={`sticky top-0 z-50 ${
+            visible ? "shadow backdrop-filter" : "shadow-none"
+          }`}
         >
           <Search />
           <div className="relative">
